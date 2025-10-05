@@ -1,53 +1,77 @@
-# Facial Thermography Analysis
+# Thermal Face Recognition using MobileNetV2
 
-A deep learning project for **facial thermal image analysis** to detect patterns and anomalies. This project demonstrates the use of computer vision and machine learning techniques for biometrics, health monitoring, and pattern recognition.
+A robust and efficient deep learning pipeline for biometric identification using thermal infrared face images. This project implements a full system—data preprocessing, augmentation, transfer learning, evaluation, and benchmarking—built on the MobileNetV2 architecture.
 
 ---
 
 ## Table of Contents
-- [Overview](#overview)
-- [Features](#features)
-- [Dataset](#dataset)
-- [Technologies](#technologies)
+
+- [Project Overview](#project-overview)
+- [System Architecture](#system-architecture)
+- [Dataset & Preprocessing](#dataset--preprocessing)
+- [Model Architecture](#model-architecture)
+- [Training & Evaluation](#training--evaluation)
 - [Results](#results)
-
-
----
-
-## Overview
-Facial thermography captures temperature variations across the human face. This project processes thermal images to extract features and detect anomalies. It uses Convolutional Neural Networks (CNNs) to classify patterns and provide accurate predictions.
-
----
-
-## Features
-- Preprocessing of thermal facial images for normalization and noise reduction.
-- CNN-based model training for pattern recognition and anomaly detection.
-- Real-time predictions on new facial thermal images.
-- Training, validation, and testing monitoring with performance metrics.
-- Supports scalable dataset integration for future improvements.
+- [Performance Benchmarking](#performance-benchmarking)
+- [How to Run](#how-to-run)
+- [Applications](#applications)
+- [Challenges & Next Steps](#challenges--next-steps)
+- [References](#references)
 
 ---
 
-## Dataset
-- **Training samples:** 1824 images  
-- **Test samples:** 462 images  
-- Images are labeled for pattern/anomaly detection.  
-- *(Note: If using a public dataset, mention source. If private/custom dataset, note accordingly.)*
+## Project Overview
+
+This project addresses the challenge of reliable face recognition in low/variable lighting and spoof-prone scenarios. By leveraging thermal imaging and modern deep learning (CNN, transfer learning), it enables:
+
+- **Biometric identification irrespective of external light**
+- **Contactless authentication** suitable for hygienic or secure environments
+- **State-of-the-art accuracy** with efficient deployment on resource-limited hardware
 
 ---
 
-## Technologies
-- Python 3.12  
-- Keras / TensorFlow  
-- OpenCV for image preprocessing  
-- NumPy & Pandas for data handling  
-- Matplotlib & Seaborn for visualization  
+## System Architecture
+
+![Full System Architecture](full_model_arch.png)
+
+**Modules:**
+- **Thermal Camera Input**: Captures 128×128 grayscale thermal images
+- **Preprocessing**: Grayscale→RGB, normalization, augmentation
+- **MobileNetV2 Backbone**: Pre-trained feature extractor (ImageNet weights)
+- **Custom Classification Head**: Dense(256, L2)+Dropout+Softmax(18)
+- **Output**: ID of the recognized subject
+- **Database Storage**: For features and authorized user templates
+- **User Interface**: Enrollment, monitoring, and management
 
 ---
 
-## Results
+## Dataset & Preprocessing
 
-Training Accuracy: ~95.65%
+- **Total Samples:** 18,220 training images, 4,564 testing images, 18 classes
+- **Image Processing:** Conversion to 128×128 RGB, normalization to [0,1]
+- **Augmentation:** Rotation, shift, zoom, horizontal flip (boosts robustness)
+- **Label Encoding:** Integer conversion and one-hot vectors
+
+---
+
+## Model Architecture
+
+- **Backbone:** MobileNetV2 (pre-trained, frozen/unfrozen in phases)
+- **Head:** Flatten → Dense(256, L2 regularization, ReLU) → Dropout(0.4) → Softmax(18)
+- **Parameters:** ~7.5 million; size: ~28.6MB
+
+---
+
+## Training & Evaluation
+
+### Strategy
+- Phase 1 (Feature Extraction): Freeze backbone, train head, lr=1e-3, 10 epochs
+- Phase 2 (Fine-tuning): Unfreeze last 100 layers, lr=1e-5, 6 epochs
+- **Callbacks:** EarlyStopping, ReduceLROnPlateau  
+- **Loss:** Categorical cross-entropy  
+- **Metrics:** Accuracy, Precision, Recall, F1-score (per-class)
+
+### Typical Commands
 
 Validation Accuracy: ~85%
 
