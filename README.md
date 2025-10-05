@@ -32,7 +32,6 @@ This project addresses the challenge of reliable face recognition in low/variabl
 
 ## System Architecture
 
-![Full System Architecture](full_model_arch.png)
 
 **Modules:**
 - **Thermal Camera Input**: Captures 128×128 grayscale thermal images
